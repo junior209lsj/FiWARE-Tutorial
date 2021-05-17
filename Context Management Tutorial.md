@@ -1,6 +1,4 @@
 # FiWARE-Tutorial
-
-
 - [FiWARE-Tutorial](#fiware-tutorial)
   - [배경 지식](#배경-지식)
     - [Docker](#docker)
@@ -243,6 +241,12 @@ For more examples and ideas, visit:
 
 WSL을 성공적으로 설치한 후, [docker 공식 다운로드 매뉴얼](https://docs.docker.com/docker-for-windows/install/)을 참고하여 docker를 설치할 수 있다.
 
+일반적으로 docker 명령어는 `sudo`로 사용해야 하지만 아래 명령어를 이용하면 `sudo`를 사용하지 않고도 사용할 수 있다.
+
+```sh
+$ sudo usermod -aG docker [username]
+```
+
 ### Orion context broker와 MongoDB 이미지 연결
 
 Orion context broker는 데이터 모델로 NGSI-V2를 사용하고 데이터베이스로 MongoDB를 사용한다. Docker를 이용하여 FiWARE 사용 환경을 구축하기 위해 `fiware/orion` 컨테이너와 `mongo:4.2` 컨테이너를 연결한다. network 명령어를 이용하여 두 컨테이너를 연결할 수 있다.
@@ -416,9 +420,11 @@ Create가 성공하면 HTTP response로 201을 받는다. 똑같은 명령을 �
 
 아래 json file을 다시 post하게 되면 id가 겹치지 않기 때문에 정상적으로 create된다.
 
-```json
-// store_test2.json
-{
+```sh
+# store_test2.json 생성
+$ curl --location --request POST 'http://localhost:1026/v2/entities' \
+--header 'Content-Type: application/json' \
+--data-raw '{
   "type": "Store",
   "id": "urn:ngsi-ld:Store:002",
   "address": {
@@ -447,7 +453,7 @@ Create가 성공하면 HTTP response로 201을 받는다. 똑같은 명령을 �
       "type": "Text",
       "value": "Checkpoint Markt"
   }
-}
+}'
 ```
 
 ## Data Entity 요청
@@ -538,6 +544,14 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities'
         }
     }
 ]
+```
+
+**Note: 예쁜 format으로 받기**
+
+일반적으로 curl 명령어를 이용해 데이터를 요청하면 그 결과는 `.json` 포맷에 맞추어 규격화되어 오는 것이 아니라 띄어쓰이와 줄바꿈 없이 plain text로 오게 된다. 출력을 위와 같이 예쁘게 바꾸려면 `| python3 -mjson.tool` 로 리디렉션한다.
+
+```sh
+$ curl --location --request GET 'http://localhost:1026/v2/entities' | python3 -mjson.tool
 ```
 
 ### Data entitiy 쿼리
