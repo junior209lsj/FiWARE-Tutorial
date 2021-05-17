@@ -36,6 +36,10 @@ http://[host name]:[port]/[path of url]/[file]?[key1]=[value1]&[key2]=[value2]&.
 
 = 연산자로 key와 value를 구분한다.
 
+#### curl 명령어
+
+curl은 서버와 클라이언트 간 data transfer 명령어이다. FTP, HTTP, POP3 등 여러 application protocol을 사용할 수 있다. FiWARE 예제에서는 curl 명령어를 이용하여 context broker와 통신을 수행한다.
+
 ## 사전 준비사항
 
 [Docker 홈페이지](https://docs.docker.com/engine/install/)의 설명에 기반하여 docker를 설치한다. 본 문서는 Ubuntu 18.04.5를 기준으로 진행하지만 docker에서 지원하는 운영체제를 가지고 있다면 그에 맞추어 설치해도 무방하다.
@@ -158,6 +162,16 @@ Postman은 무료 REST API 테스트 프로그램이며, REST API 기반으로 �
 ```
 $ sudo snap install postman
 ```
+
+다른 운영체제에서는 [Postman 홈페이지](https://www.postman.com/downloads/)에서 다운로드받아 사용할 수 있다.
+
+#### 간단한 실행법
+
+Postman을 실행하고 Workspaces에 들어가 새로운 workspace를 만든다.
+
+![Workspace 생성](../img/Postman%20workspace.PNG)
+
+
 
 ## Hello World!
 
