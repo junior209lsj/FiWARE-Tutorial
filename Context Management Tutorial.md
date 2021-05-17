@@ -9,8 +9,8 @@
       - [1.1.2.2. curl 명령어를 이용한 context broker와의 통신](#1122-curl-명령어를-이용한-context-broker와의-통신)
       - [1.1.2.3. Postman을 이용한 context broker와의 통신 (선택 사항)](#1123-postman을-이용한-context-broker와의-통신-선택-사항)
   - [1.2. 사전 준비사항](#12-사전-준비사항)
-    - [1.2.1. Docker 설치](#121-docker-설치)
-    - [1.2.2. 실습 환경 정보](#122-실습-환경-정보)
+    - [1.2.1. 실습 환경 정보](#121-실습-환경-정보)
+    - [1.2.2. Docker 설치](#122-docker-설치)
       - [1.2.2.1. docker 설치 (Ubuntu)](#1221-docker-설치-ubuntu)
       - [1.2.2.2. Docker 설치 (Windows 10)](#1222-docker-설치-windows-10)
     - [1.2.3. Orion context broker와 MongoDB 이미지 연결](#123-orion-context-broker와-mongodb-이미지-연결)
@@ -72,7 +72,7 @@ RESTful (REpresentational State Transferful) API는 resource-based architecture�
 3. 전달된 메시지는 'self-described'되어야 한다. 대표적으로 `.json`, `.xml` 포맷이 있다.
 4. service를 수행하고 난 뒤에는 그에 대한 모든 요소를 'forget'한다. 즉, 모든 service는 stateless execution이다.
 
-| 메소드 | <center>기능</center>                                   |
+| 메소드 | <center>기능</center>                                    |
 | :----: | :------------------------------------------------------ |
 |  PUT   | Modify a resource by transferring a new state           |
 |  POST  | Create a new resource                                   |
@@ -144,14 +144,15 @@ POST 메소드 사용 예제
 
 ## 1.2. 사전 준비사항
 
-### 1.2.1. Docker 설치
+### 1.2.1. 실습 환경 정보
 
-[Docker 홈페이지](https://docs.docker.com/engine/install/)의 설명에 기반하여 docker를 설치한다. 본 문서는 Ubuntu 18.04.5를 기준으로 진행하지만 docker에서 지원하는 운영체제를 가지고 있다면 그에 맞추어 설치해도 무방하다.
+* Ubuntu 18.04.5 및 MS-Windows 10-Ubuntu 18.04 WSL 2에서 테스트하였다.
+* Docker를 설치할 수 있는 환경이라면 플랫폼 독립적으로 실행 가능하다.
+* 실습에 `curl` 명령어를 사용하였지만, 동일 명령어에 상응하는 Postman request로도 실습을 진행할 수 있다.
 
-### 1.2.2. 실습 환경 정보
+### 1.2.2. Docker 설치
 
-* Ubuntu 18.04.5에서 진행하였다.
-* Docker를 설치할 수 있는 환경이라면 플랫폼 독립적으로 실행 가능
+[Docker 홈페이지](https://docs.docker.com/engine/install/)의 설명에 기반하여 docker를 설치한다. 본 문서는 Ubuntu 18.04.5와 MS-Windows 10 WSL2 기준으로 진행하지만 docker에서 지원하는 운영체제를 가지고 있다면 그에 맞추어 설치해도 무방하다.
 
 #### 1.2.2.1. docker 설치 (Ubuntu)
 
@@ -228,8 +229,6 @@ For more examples and ideas, visit:
 ```
 
 #### 1.2.2.2. Docker 설치 (Windows 10)
-
-**Docker 다운로드 및 설치**
 
 [docker 공식 다운로드 매뉴얼](https://docs.docker.com/docker-for-windows/install/)을 참고하여 docker를 설치할 수 있다. Docker 설치 파일을 다운로드 받은 후 실행하면 아래와 같은 창을 확인할 수 있다. `Install required Windows components for WSL 2`는 docker를 구동하기 위한 WSL (Windows Subsystem for Linux)을 설치하겠냐고 물어보는 창이기 때문에 꼭 체크한다.
 
@@ -582,9 +581,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities'
 ]
 ```
 
-**Note 예쁜 format으로 받기**
+**Note: 예쁜 format으로 받기**
 
-일반적으로 curl 명령어를 이용해 데이터를 요청하면 그 결과는 `.json` 포맷에 맞추어 규격화되어 오는 것이 아니라 띄어쓰이와 줄바꿈 없이 plain text로 오게 된다. 출력을 위와 같이 예쁘게 바꾸려면 `| python3 -mjson.tool` 로 리디렉션한다.
+일반적으로 curl 명령어를 이용해 데이터를 요청하면 그 결과는 `.json` 포맷에 맞추어 규격화되어 오는 것이 아니라 띄어쓰이와 줄바꿈 없이 plain text로 오게 된다. 출력을 위와 같이 예쁘게 바꾸려면 `| python3 -mjson.tool` 로 리디렉션한다. Ubuntu 18.04 환경에는 `python3`이 기본으로 설치되어 있으므로 추가적인 설치 작업은 불필요하다.
 
 ```sh
 $ curl --location --request GET 'http://localhost:1026/v2/entities' | python3 -mjson.tool
