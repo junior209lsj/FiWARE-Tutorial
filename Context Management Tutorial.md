@@ -20,6 +20,8 @@ FiWARE tutorial을 시작하기 전에, 예제 실행 및 FiWARE의 시스템 �
 
 Docker는 어플리케이션의 개발, 배포, 실행을 infrastructure 독립적으로 가능하게 해 주는 개방형 플랫폼이다. Docker는 다양한 프로그램, 실행환경을 컨테이너로 추상화하고, 동일한 인터페이스를 제공하여 프로그램의 배포 및 관리를 단순하게 해 준다.
 
+FiWARE tutorial 문서는 docker image를 이용하여 필요한 구성 요소를 다운로드받은 후 예제 실습을 진행하기 때문에 docker에 대한 기본적인 이해가 필요하다. 
+
 #### Docker container
 
 Container는 소프트웨어의 실행 환경을 독립적으로 유지할 수 있게 해 주는 운영체제 수준의 격리 기술을 의미한다. 즉 docker 
@@ -28,7 +30,7 @@ Container는 소프트웨어의 실행 환경을 독립적으로 유지할 수 �
 
 #### Query string
 
-쿼리 스트링을 이용하여 요청 URL에 파라미터를 넘길 수 있다. 아래와 같은 방식으로 파라미터를 전달한다.
+FiWARE에서는 쿼리 스트링을 이용하여 context broker에 파라미터를 넘긴다. 아래와 같은 방식으로 파라미터를 전달한다.
 
 ```
 http://[host name]:[port]/[path of url]/[file]?[key1]=[value1]&[key2]=[value2]&...&[key n]=[value n]
@@ -36,11 +38,58 @@ http://[host name]:[port]/[path of url]/[file]?[key1]=[value1]&[key2]=[value2]&.
 
 = 연산자로 key와 value를 구분한다.
 
-#### curl 명령어
+#### curl 명령어를 이용한 context broker와의 통신
 
 curl은 서버와 클라이언트 간 data transfer 명령어이다. FTP, HTTP, POP3 등 여러 application protocol을 사용할 수 있다. FiWARE 예제에서는 curl 명령어를 이용하여 context broker와 통신을 수행한다.
 
+FiWARE에서 사용하는 curl 명령어 예시는 아래와 같다.
+
+```sh
+$ curl --location --request POST 'orion context broker의 URI' \
+--header 'Content-Type: application/json' \
+--data-raw 'json 형식의 text data'
+```
+
+* `--location` 옵션: HTTP에서 요청한 페이지가 다른 location으로 옮겨졌을 때 새로운 location에 대해 자동으로 재요청한다.
+* `--request` 옵션: HTTP 메소드를 지정한다. `PUT`, `GET`, `POST`, `DELETE` 등으로 지정할 수 있다.
+* `--header` 옵션: HTTP 헤더를 추가하는 옵션. 본 실습에서는 json 파일 형식을 사용하기 때문에 `'Content-Type: application/json'` 헤더를 붙여 준다. 더 자세한 `Content-Type`에 관한 내용은 [링크](https://hbesthee.tistory.com/45)를 참조하면 좋다.
+* `--data-raw` 옵션: `POST` request를 진행할 때 data를 raw data 형태로 전달한다. `@` 기호를 이용한 special character는 무시한다.
+
+종합적으로 명령어를 해석하면 orion context broker의 URI에 json 타입의 데이터를 text 형태로 `POST` 한다라고 할 수 있다.
+
+더 다양한 curl 사용법은 [curl 공식 documentation](https://curl.se/docs/manpage.html)을 참고하면 좋다.
+
+#### Postman을 이용한 context broker와의 통신 (선택 사항)
+
+Postman은 무료 REST API 테스트 프로그램이며, REST API 기반으로 통신하는 경우가 많은 FiWARE 실습에서 아주 유용하게 사용할 수 있다. Windows, Mac, Linux에서 모두 사용 가능하며 홈페이지에서 다운로드받을 수 있다. Ubuntu에서는 아래 명령어로 설치 가능하다.
+
+```
+$ sudo snap install postman
+```
+
+다른 운영체제에서는 [Postman 홈페이지](https://www.postman.com/downloads/)에서 다운로드받아 사용할 수 있다.
+
+**간단한 사용법**
+
+Postman을 실행하고 Workspaces에 들어가 새로운 workspace를 만든다.
+
+![Workspace 생성](./img/Postman%20workspace.PNG)
+
+Workspace에 들어간 후 create a request 를 클릭하여 request를 생성한다.
+
+![Request 생성](./img/postman-create-request.png)
+
+GET 메소드 사용 예제
+
+![GET 예시](./img/postman-get-ex.png)
+
+POST 메소드 사용 예제
+
+![POST 예시](./img/postman-post-ex.png)
+
 ## 사전 준비사항
+
+### Docker 설치
 
 [Docker 홈페이지](https://docs.docker.com/engine/install/)의 설명에 기반하여 docker를 설치한다. 본 문서는 Ubuntu 18.04.5를 기준으로 진행하지만 docker에서 지원하는 운영체제를 가지고 있다면 그에 맞추어 설치해도 무방하다.
 
@@ -49,7 +98,7 @@ curl은 서버와 클라이언트 간 data transfer 명령어이다. FTP, HTTP, 
 * Ubuntu 18.04.5에서 진행하였다.
 * Docker를 설치할 수 있는 환경이라면 플랫폼 독립적으로 실행 가능
 
-### Docker 설치
+#### docker 설치 (Ubuntu)
 
 1) 구버전이 설치되어 있는 경우 아래 명령어로 제거한다.
 
@@ -123,7 +172,13 @@ For more examples and ideas, visit:
  https://docs.docker.com/get-started/
 ```
 
-### FiWARE와 MongoDB 이미지 연결
+#### Docker 설치 (Windows 10)
+
+**WSL 설치**
+
+**Docker 다운로드 및 설치**
+
+### Orion context broker와 MongoDB 이미지 연결
 
 Orion context broker는 데이터 모델로 NGSI-V2를 사용하고 데이터베이스로 MongoDB를 사용한다. Docker를 이용하여 FiWARE 사용 환경을 구축하기 위해 `fiware/orion` 컨테이너와 `mongo:4.2` 컨테이너를 연결한다. network 명령어를 이용하여 두 컨테이너를 연결할 수 있다.
 
@@ -155,24 +210,6 @@ $ docker run -d --name fiware-orion -h orion --network=fiware_default \
     -p 1026:1026 fiware/orion -dbhost mongo-db
 ```
 
-### (선택사항) POSTMAN 프로그램 사용
-
-Postman은 무료 REST API 테스트 프로그램이며, REST API 기반으로 통신하는 경우가 많은 FiWARE 실습에서 아주 유용하게 사용할 수 있다. Windows, Mac, Linux에서 모두 사용 가능하며 홈페이지에서 다운로드받을 수 있다. Ubuntu에서는 아래 명령어로 설치 가능하다.
-
-```
-$ sudo snap install postman
-```
-
-다른 운영체제에서는 [Postman 홈페이지](https://www.postman.com/downloads/)에서 다운로드받아 사용할 수 있다.
-
-#### 간단한 실행법
-
-Postman을 실행하고 Workspaces에 들어가 새로운 workspace를 만든다.
-
-![Workspace 생성](./img/Postman%20workspace.PNG)
-
-
-
 ## Hello World!
 
 컨테이너를 실행한 후 `docker ps` 명령어를 이용하여 실행되고 있는 컨테이너를 확인할 수 있다. 아래와 같이 두 개의 컨테이너가 실행되고 있음을 확인할 수 있다.
@@ -196,7 +233,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS  
 **Request**
 
 ```sh
-curl --location --request GET 'http://localhost:1026/version'
+$ curl --location --request GET 'http://localhost:1026/version'
 ```
 
 **Response**
@@ -264,7 +301,7 @@ RESTful API의 POST method를 이용하여 data entitiy를 만들어 본다. Ori
 }
 ```
 
-이 `.json` 파일은 NGSIV2 API를 따르고 있다??. 모든 entitiy는 unique id를 가지고 있어야 한다. 각 Attribute는 `type`, `value` 쌍으로 구성되어 있다. 이 내용의 entitiy를 Postman request를 통해서 POST하거나 아래와 같은 curl 명령어를 이용하여 POST할 수 있다.
+이 `.json` 파일은 NGSIV2 data model을 따르고 있다. 모든 entitiy는 unique id를 가지고 있어야 한다. 각 Attribute는 `type`, `value` 쌍으로 구성되어 있다. 이 내용의 entitiy를 Postman request를 통해서 POST하거나 아래와 같은 curl 명령어를 이용하여 POST할 수 있다.
 
 **Request**
 
@@ -305,7 +342,7 @@ $ curl --location --request POST 'http://localhost:1026/v2/entities' \
 
 Create가 성공하면 HTTP response로 201을 받는다. 똑같은 명령을 한 번 더 실행하면 id가 충돌하기 때문에 422 (unprocessable entitiy)를 받는다.
 
-**Response**
+**Response (실패 시)**
 
 ```sh
 # Error
@@ -491,12 +528,12 @@ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Sto
 ### options=와 attrs= 사용하기
 
 
-`type`을 제외한 `key`:`value`쌍만 보고 싶으면 `options=keyValues`를 이용하여 간결하게 정보를 쿼리할 수 있다.
+`type`을 제외한 `key:value`쌍만 보고 싶으면 `options=keyValues`를 이용하여 간결하게 정보를 쿼리할 수 있다.
 
 **Request**
 
 ```sh
-curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001?options=keyValues'
+$ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001?options=keyValues'
 ```
 
 **Response**
@@ -527,7 +564,7 @@ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Sto
 **Request**
 
 ```sh
-curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001?options=values&attrs=location'
+$ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001?options=values&attrs=location'
 ```
 
 **Response**
@@ -549,7 +586,7 @@ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Sto
 또한 URL에 `/v2/entities/{id}/attrs/{attrsName}/value`와 같은 형식으로도 데이터를 요청할 수 있다. 예를 들어 바로 위 예제와 동일한 결과를 얻기 위해 아래와 같은 요청을 할 수도 있다.
 
 ```sh
-curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs/location/value'
+$ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs/location/value'
 ```
 
 ### 데이터 필터링
@@ -559,7 +596,7 @@ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Sto
 **Request**
 
 ```sh
-curl --location --request GET 'http://localhost:1026/v2/entities/?q=name==%27Checkpoint%20Markt%27'
+$ curl --location --request GET 'http://localhost:1026/v2/entities/?q=name==%27Checkpoint%20Markt%27'
 ```
 
 **Response**
