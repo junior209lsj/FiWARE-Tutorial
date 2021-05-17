@@ -1,34 +1,34 @@
-# FiWARE-Tutorial
-- [FiWARE-Tutorial](#fiware-tutorial)
-  - [배경 지식](#배경-지식)
-    - [Docker](#docker)
-      - [Docker image와 container](#docker-image와-container)
-      - [Docker 조금 더 배워보기](#docker-조금-더-배워보기)
-    - [RESTful API](#restful-api)
-      - [Query string](#query-string)
-      - [curl 명령어를 이용한 context broker와의 통신](#curl-명령어를-이용한-context-broker와의-통신)
-      - [Postman을 이용한 context broker와의 통신 (선택 사항)](#postman을-이용한-context-broker와의-통신-선택-사항)
-  - [사전 준비사항](#사전-준비사항)
-    - [Docker 설치](#docker-설치)
-    - [실습 환경 정보](#실습-환경-정보)
-      - [docker 설치 (Ubuntu)](#docker-설치-ubuntu)
-      - [Docker 설치 (Windows 10)](#docker-설치-windows-10)
-    - [Orion context broker와 MongoDB 이미지 연결](#orion-context-broker와-mongodb-이미지-연결)
-  - [Hello World!](#hello-world)
-  - [Data entitiy 생성](#data-entitiy-생성)
-  - [Data Entity 요청](#data-entity-요청)
-    - [전체 data entitiy 요청](#전체-data-entitiy-요청)
-    - [Data entitiy 쿼리](#data-entitiy-쿼리)
-      - [특정 id를 가진 data entitiy 요청하기](#특정-id를-가진-data-entitiy-요청하기)
-      - [options=와 attrs= 사용하기](#options와-attrs-사용하기)
-      - [URL 주소로 특정 attribute 받아오기](#url-주소로-특정-attribute-받아오기)
-      - [데이터 필터링](#데이터-필터링)
-  - [Data entitiy 업데이트](#data-entitiy-업데이트)
-    - [단일 attribute 변경](#단일-attribute-변경)
-    - [다중 attribute 변경](#다중-attribute-변경)
-  - [Data entitiy 삭제](#data-entitiy-삭제)
-    - [Data entitiy의 attribute 삭제](#data-entitiy의-attribute-삭제)
-    - [Data entity 삭제](#data-entity-삭제)
+# 1. FiWARE-Tutorial
+- [1. FiWARE-Tutorial](#1-fiware-tutorial)
+  - [1.1. 배경 지식](#11-배경-지식)
+    - [1.1.1. Docker](#111-docker)
+      - [1.1.1.1. Docker image와 container](#1111-docker-image와-container)
+      - [1.1.1.2. Docker 조금 더 배워보기](#1112-docker-조금-더-배워보기)
+    - [1.1.2. RESTful API](#112-restful-api)
+      - [1.1.2.1. Query string](#1121-query-string)
+      - [1.1.2.2. curl 명령어를 이용한 context broker와의 통신](#1122-curl-명령어를-이용한-context-broker와의-통신)
+      - [1.1.2.3. Postman을 이용한 context broker와의 통신 (선택 사항)](#1123-postman을-이용한-context-broker와의-통신-선택-사항)
+  - [1.2. 사전 준비사항](#12-사전-준비사항)
+    - [1.2.1. Docker 설치](#121-docker-설치)
+    - [1.2.2. 실습 환경 정보](#122-실습-환경-정보)
+      - [1.2.2.1. docker 설치 (Ubuntu)](#1221-docker-설치-ubuntu)
+      - [1.2.2.2. Docker 설치 (Windows 10)](#1222-docker-설치-windows-10)
+    - [1.2.3. Orion context broker와 MongoDB 이미지 연결](#123-orion-context-broker와-mongodb-이미지-연결)
+  - [1.3. Hello World!](#13-hello-world)
+  - [1.4. Data entitiy 생성](#14-data-entitiy-생성)
+  - [1.5. Data Entity 요청](#15-data-entity-요청)
+    - [1.5.1. 전체 data entitiy 요청](#151-전체-data-entitiy-요청)
+    - [1.5.2. Data entitiy 쿼리](#152-data-entitiy-쿼리)
+      - [1.5.2.1. 특정 id를 가진 data entitiy 요청하기](#1521-특정-id를-가진-data-entitiy-요청하기)
+      - [1.5.2.2. options=와 attrs= 사용하기](#1522-options와-attrs-사용하기)
+      - [1.5.2.3. URL 주소로 특정 attribute 받아오기](#1523-url-주소로-특정-attribute-받아오기)
+      - [1.5.2.4. 데이터 필터링](#1524-데이터-필터링)
+  - [1.6. Data entitiy 업데이트](#16-data-entitiy-업데이트)
+    - [1.6.1. 단일 attribute 변경](#161-단일-attribute-변경)
+    - [1.6.2. 다중 attribute 변경](#162-다중-attribute-변경)
+  - [1.7. Data entitiy 삭제](#17-data-entitiy-삭제)
+    - [1.7.1. Data entitiy의 attribute 삭제](#171-data-entitiy의-attribute-삭제)
+    - [1.7.2. Data entity 삭제](#172-data-entity-삭제)
 
 
 
@@ -42,28 +42,28 @@
 * [FIWARE NGSI APIv2 Walkthrough](https://fiware-orion.readthedocs.io/en/latest/user/walkthrough_apiv2/index.html#query-entity)
 * [Wednesday Webinar: Core Context Management](https://www.youtube.com/watch?v=pK4GgYjlmdY)
 
-## 배경 지식
+## 1.1. 배경 지식
 
 FiWARE tutorial을 시작하기 전에, 예제 실행 및 FiWARE의 시스템 구조를 이해하는 데 필수적인 요소를 먼저 설명한다. 본 예제는 docker container를 통해 데이터베이스 MongoDB와 FiWARE Orion context broker를 사용하며, context broker와 client의 통신에 RESTful API를 사용하기 때문에 이 두 가지 사항에 대해 먼저 설명한다.
 
-### Docker
+### 1.1.1. Docker
 
 Docker는 어플리케이션의 개발, 배포, 실행을 infrastructure 독립적으로 가능하게 해 주는 개방형 플랫폼이다. Docker는 다양한 프로그램, 실행환경을 컨테이너로 추상화하고, 동일한 인터페이스를 제공하여 프로그램의 배포 및 관리를 단순하게 해 준다.
 
 FiWARE tutorial 문서는 docker image를 이용하여 필요한 구성 요소를 다운로드받은 후 예제 실습을 진행하기 때문에 docker에 대한 기본적인 이해가 필요하다. 
 
-#### Docker image와 container
+#### 1.1.1.1. Docker image와 container
 
 Container는 소프트웨어의 실행 환경을 독립적으로 유지할 수 있게 해 주는 운영체제 수준의 격리 기술을 의미한다. 즉 docker container는 대상 software의 실행에 필요한 의존성 요소를 모두 가지고 있는 격리된 환경이라고 볼 수 있다.
 
 Image는 컨테이너 실행에 필요한 모든 리소스와 설정값들을 포함하고 있는 것으로 container를 image가 실행된 상태라고 볼 수 있다. Container의 상태가 바뀌어도 image는 변하지 않으며, 한 image에서 여러 가지 container를 실행할 수 있다.
 
-#### Docker 조금 더 배워보기
+#### 1.1.1.2. Docker 조금 더 배워보기
 
 * [생활코딩 docker 튜토리얼](https://www.youtube.com/watch?v=Bhzz9E3xuXY)
 * [Docker 기본 사용법](http://pyrasis.com/Docker/Docker-HOWTO)
 
-### RESTful API
+### 1.1.2. RESTful API
 
 RESTful (REpresentational State Transferful) API는 resource-based architecture의 한 종류로 아래 네 가지 특징을 가지고 있다.
 
@@ -83,7 +83,7 @@ RESTful (REpresentational State Transferful) API는 resource-based architecture�
 
 RESTful API는 HTTP URI를 통해 자원을 명시하고, HTTP method를 통해 해당 자원에 대한 operation을 한다. FiWARE에서는 client가 RESTful API를 이용하여 context broker에 메시지를 넘기고 필요한 data를 query하기 때문에 RESTful API에 대한 사용법을 알고 있어야 한다.
 
-#### Query string
+#### 1.1.2.1. Query string
 
 FiWARE에서는 쿼리 스트링을 이용하여 context broker에 파라미터를 넘긴다. 아래와 같은 방식으로 파라미터를 전달한다.
 
@@ -93,7 +93,7 @@ http://[host name]:[port]/[path of url]/[file]?[key1]=[value1]&[key2]=[value2]&.
 
 = 연산자로 key와 value를 구분한다.
 
-#### curl 명령어를 이용한 context broker와의 통신
+#### 1.1.2.2. curl 명령어를 이용한 context broker와의 통신
 
 curl은 서버와 클라이언트 간 data transfer 명령어이다. FTP, HTTP, POP3 등 여러 application protocol을 사용할 수 있다. FiWARE 예제에서는 curl 명령어를 이용하여 context broker와 통신을 수행한다.
 
@@ -114,7 +114,7 @@ $ curl --location --request POST 'orion context broker의 URI' \
 
 더 다양한 curl 사용법은 [curl 공식 documentation](https://curl.se/docs/manpage.html)을 참고하면 좋다.
 
-#### Postman을 이용한 context broker와의 통신 (선택 사항)
+#### 1.1.2.3. Postman을 이용한 context broker와의 통신 (선택 사항)
 
 Postman은 무료 REST API 테스트 프로그램이며, REST API 기반으로 통신하는 경우가 많은 FiWARE 실습에서 아주 유용하게 사용할 수 있다. Windows, Mac, Linux에서 모두 사용 가능하며 홈페이지에서 다운로드받을 수 있다. Ubuntu에서는 아래 명령어로 설치 가능하다.
 
@@ -142,18 +142,18 @@ POST 메소드 사용 예제
 
 ![POST 예시](./img/postman-post-ex.png)
 
-## 사전 준비사항
+## 1.2. 사전 준비사항
 
-### Docker 설치
+### 1.2.1. Docker 설치
 
 [Docker 홈페이지](https://docs.docker.com/engine/install/)의 설명에 기반하여 docker를 설치한다. 본 문서는 Ubuntu 18.04.5를 기준으로 진행하지만 docker에서 지원하는 운영체제를 가지고 있다면 그에 맞추어 설치해도 무방하다.
 
-### 실습 환경 정보
+### 1.2.2. 실습 환경 정보
 
 * Ubuntu 18.04.5에서 진행하였다.
 * Docker를 설치할 수 있는 환경이라면 플랫폼 독립적으로 실행 가능
 
-#### docker 설치 (Ubuntu)
+#### 1.2.2.1. docker 설치 (Ubuntu)
 
 1) 구버전이 설치되어 있는 경우 아래 명령어로 제거한다.
 
@@ -227,19 +227,53 @@ For more examples and ideas, visit:
  https://docs.docker.com/get-started/
 ```
 
-#### Docker 설치 (Windows 10)
-
-**WSL 설치**
-
-[마이크로소프트 공식 페이지](https://docs.microsoft.com/en-us/windows/wsl/install-win10)에서 WSL (Windows Subsystem for Linux)를 설치한다. Ubuntu 운영체제를 설치하는 것을 추천한다.
-
-```sh
-> wsl --install
-```
+#### 1.2.2.2. Docker 설치 (Windows 10)
 
 **Docker 다운로드 및 설치**
 
-WSL을 성공적으로 설치한 후, [docker 공식 다운로드 매뉴얼](https://docs.docker.com/docker-for-windows/install/)을 참고하여 docker를 설치할 수 있다.
+[docker 공식 다운로드 매뉴얼](https://docs.docker.com/docker-for-windows/install/)을 참고하여 docker를 설치할 수 있다. Docker 설치 파일을 다운로드 받은 후 실행하면 아래와 같은 창을 확인할 수 있다. `Install required Windows components for WSL 2`는 docker를 구동하기 위한 WSL (Windows Subsystem for Linux)을 설치하겠냐고 물어보는 창이기 때문에 꼭 체크한다.
+
+1) 설치파일을 실행한다.
+
+![Docker 설치1](./img/win10-docker-install-1.PNG)
+
+2) 설치 버튼을 누르면 설치가 진행된다.
+
+![Docker 설치2](./img/win10-docker-install-2.PNG)
+
+3) 설치가 완료된 후 재부팅한다.
+
+![Docker 설치3](./img/win10-docker-install-3.PNG)
+
+4) 재부팅 후 `Docker Desktop`을 실행하면 아래와 같이 WSL 2 Linux Kernel을 업데이트하라는 표시가 나온다.
+
+![Docker 설치4](./img/win10-docker-install-4.PNG)
+
+5) 링크에 들어가서 `x64 머신용 최신 WSL2 Linux 커널 업데이트 패키지` 를 설치하고 Restart 버튼을 누른다.
+
+![Docker 설치5](./img/win10-docker-install-5.PNG)
+
+6) Powershell에 들어가서 WSL2를 기본 버전으로 설정한다.
+
+![Docker 설치6](./img/win10-docker-install-6.PNG)
+
+7) WSL2 설정 후 Microsoft store에 접속해서 Ubuntu 18.04를 다운로드받는다.
+
+![Ubuntu 18.04 다운](./img/store-ubuntu-1804.PNG)
+
+8) 시작 화면에 ubuntu 18.04를 입력해서 뜨는 터미널에 `docker` 명령어를 치면 아래와 같은 오류 메시지가 뜨게 된다.
+
+![Docker 설치7](./img/docker-error-wsl.PNG)
+
+9) 이 경우 Powershell을 관리자 권한으로 실행하여 아래 명령어를 실행해서 기본 버전을 `Ubuntu 18.04`로 바꾸면 `Ubuntu 18.04`에서 docker가 잘 실행된다.
+
+```sh
+> wsl --list --verbose # WSL 리스트 확인
+> wsl --set-version Ubuntu-18.04 2
+> wsl --set-default Ubuntu-18.04
+```
+
+![Docker 설치8](./img/wsl-set-default.PNG)
 
 일반적으로 docker 명령어는 `sudo`로 사용해야 하지만 아래 명령어를 이용하면 `sudo`를 사용하지 않고도 사용할 수 있다.
 
@@ -247,7 +281,9 @@ WSL을 성공적으로 설치한 후, [docker 공식 다운로드 매뉴얼](htt
 $ sudo usermod -aG docker [username]
 ```
 
-### Orion context broker와 MongoDB 이미지 연결
+앞으로 Ubuntu 기반으로 진행되는 모든 다음 단계는 MS Windows에서도 WSL 터미널을 열어 동일하게 진행할 수 있다.
+
+### 1.2.3. Orion context broker와 MongoDB 이미지 연결
 
 Orion context broker는 데이터 모델로 NGSI-V2를 사용하고 데이터베이스로 MongoDB를 사용한다. Docker를 이용하여 FiWARE 사용 환경을 구축하기 위해 `fiware/orion` 컨테이너와 `mongo:4.2` 컨테이너를 연결한다. network 명령어를 이용하여 두 컨테이너를 연결할 수 있다.
 
@@ -279,7 +315,7 @@ $ docker run -d --name fiware-orion -h orion --network=fiware_default \
     -p 1026:1026 fiware/orion -dbhost mongo-db
 ```
 
-## Hello World!
+## 1.3. Hello World!
 
 컨테이너를 실행한 후 `docker ps` 명령어를 이용하여 실행되고 있는 컨테이너를 확인할 수 있다. 아래와 같이 두 개의 컨테이너가 실행되고 있음을 확인할 수 있다.
 
@@ -332,7 +368,7 @@ $ curl --location --request GET 'http://localhost:1026/version'
 }
 ```
 
-## Data entitiy 생성
+## 1.4. Data entitiy 생성
 
 RESTful API의 `POST` method를 이용하여 data entitiy를 만들어 본다. Orion context manager에 다음과 같은 상점 정보를 `.json` 형태로 생성할 것이다.
 
@@ -456,9 +492,9 @@ $ curl --location --request POST 'http://localhost:1026/v2/entities' \
 }'
 ```
 
-## Data Entity 요청
+## 1.5. Data Entity 요청
 
-### 전체 data entitiy 요청
+### 1.5.1. 전체 data entitiy 요청
 
 `"id": "urn:ngsi-ld:Store:001"`, `"id": "urn:ngsi-ld:Store:002"`의 entitiy를 create한 상태에서 curl 명령어나 postman 프로그램으로 `GET` 메소드를 이용하여 Context manager에게 data entitiy를 요청하면 아래와 같이 모든 내용의 entitiy를 받게 된다.
 
@@ -546,7 +582,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities'
 ]
 ```
 
-**Note: 예쁜 format으로 받기**
+**Note 예쁜 format으로 받기**
 
 일반적으로 curl 명령어를 이용해 데이터를 요청하면 그 결과는 `.json` 포맷에 맞추어 규격화되어 오는 것이 아니라 띄어쓰이와 줄바꿈 없이 plain text로 오게 된다. 출력을 위와 같이 예쁘게 바꾸려면 `| python3 -mjson.tool` 로 리디렉션한다.
 
@@ -554,9 +590,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities'
 $ curl --location --request GET 'http://localhost:1026/v2/entities' | python3 -mjson.tool
 ```
 
-### Data entitiy 쿼리
+### 1.5.2. Data entitiy 쿼리
 
-#### 특정 id를 가진 data entitiy 요청하기
+#### 1.5.2.1. 특정 id를 가진 data entitiy 요청하기
 
 `"id": "urn:ngsi-ld:Store:001"` entitiy만 가지고 오고 싶으면 아래와 같은 명령어로 데이터를 쿼리할 수 있다.
 
@@ -605,7 +641,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-#### options=와 attrs= 사용하기
+#### 1.5.2.2. options=와 attrs= 사용하기
 
 
 `type`을 제외한 `key:value`쌍만 보고 싶으면 `options=keyValues`를 이용하여 간결하게 정보를 쿼리할 수 있다.
@@ -661,7 +697,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 ]
 ```
 
-#### URL 주소로 특정 attribute 받아오기
+#### 1.5.2.3. URL 주소로 특정 attribute 받아오기
 
 또한 URL에 `/v2/entities/{id}/attrs/{attrsName}/value`와 같은 형식으로도 데이터를 요청할 수 있다. 예를 들어 바로 위 예제와 동일한 결과를 얻기 위해 아래와 같은 요청을 할 수도 있다.
 
@@ -669,7 +705,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs/location/value'
 ```
 
-#### 데이터 필터링
+#### 1.5.2.4. 데이터 필터링
 
 특정 `value`를 가지고 있는 data entitiy를 필터링하고 싶은 경우 `q=[key]==[value]`를 이용한다. 예를 들어 가게 이름이 'Checkpoint Markt'인 data entitiy (`"id": "urn:ngsi-ld:Store:001"`인 entitiy)의 전체 정보를 보고 싶은 경우 아래와 같이 요청한다. 웹 표준에서 `'`는 `%27`이고, 공백은 `%20`이다 ([참고](https://ghdwn0217.tistory.com/76)).
 
@@ -721,9 +757,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/?q=name==%27C
 ]
 ```
 
-## Data entitiy 업데이트
+## 1.6. Data entitiy 업데이트
 
-### 단일 attribute 변경
+### 1.6.1. 단일 attribute 변경
 
 `PUT` 메소드를 이용하여 특정 data entitiy를 변경할 수 있다. 변경 대상이 되는 attribute는 `http://[context broker 주소]:[port]/id/attrs/path/of/attribute`로 접근한다. 예를 들어 `urn:ngsi-ld:Store:001`의 `address` attribute의 `value`를 변경하는 경우 다음과 같은 명령어로 변경할 수 있다.
 
@@ -788,7 +824,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-### 다중 attribute 변경
+### 1.6.2. 다중 attribute 변경
 
 `PATCH` 명령어를 이용하여 data entitiy의 여러 attribute를 한 번에 변경할 수 있다. 다음 명령어는 `urn:ngsi-ld:Store:001`의 `location`, `name` attribute를 동시에 변경하는 메소드이다.
 
@@ -860,9 +896,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-## Data entitiy 삭제
+## 1.7. Data entitiy 삭제
 
-### Data entitiy의 attribute 삭제
+### 1.7.1. Data entitiy의 attribute 삭제
 
 `DELETE` 메소드를 이용하여 data entitiy의 일부 attribute를 삭제할 수 있다. `id`가 `urn:ngsi-ld:Store:001`인 data entity의 `location` attribute를 삭제하려면 다음과 같음 명령어를 사용한다.
 
@@ -909,7 +945,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-### Data entity 삭제
+### 1.7.2. Data entity 삭제
 
 `DELETE` 메소드를 이용하여 data entitiy 전체를 삭제할 수 있다. `id`가 `urn:ngsi-ld:Store:001`인 data entitiy를 삭제하려면 다음과 같은 명령어를 사용한다.
 
