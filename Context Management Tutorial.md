@@ -264,7 +264,7 @@ $ docker network inspect fiware_default # fiware_default 정보 확인
 아래 명령어로 MongoDB 컨테이너를 실행한다.
 
 ```sh
-$ docker run -d --name=mongo-db --network=fiware-default \
+$ docker run -d --name=mongo-db --network=fiware_default \
     --expose=27017 mongo:4.2 --bind_ip_all
 ```
 
