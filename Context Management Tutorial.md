@@ -795,7 +795,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 **Request**
 
 ```sh
-curl --location --request PATCH 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs' \
+$ curl --location --request PATCH 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "location": {
