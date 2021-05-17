@@ -169,7 +169,7 @@ $ sudo snap install postman
 
 Postman을 실행하고 Workspaces에 들어가 새로운 workspace를 만든다.
 
-![Workspace 생성](../img/Postman%20workspace.PNG)
+![Workspace 생성](./img/Postman%20workspace.PNG)
 
 
 
