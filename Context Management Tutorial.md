@@ -5,11 +5,11 @@
 
 아래 참고 문서를 기반으로 만든 문서입니다.
 
-**목차**
-
 * [Core Context Management: The NGSI-v2 Interface » Getting Started with NGSI-v2](https://fiware-tutorials.readthedocs.io/en/latest/getting-started/index.html#next-steps)
 * [FIWARE NGSI APIv2 Walkthrough](https://fiware-orion.readthedocs.io/en/latest/user/walkthrough_apiv2/index.html#query-entity)
 * [Wednesday Webinar: Core Context Management](https://www.youtube.com/watch?v=pK4GgYjlmdY)
+
+**목차**
 
 - [1. 실습 사전지식 및 준비사항.](#1-실습-사전지식-및-준비사항)
   - [1.1. 배경 지식](#11-배경-지식)
