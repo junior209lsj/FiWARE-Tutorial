@@ -44,6 +44,7 @@
     - [2.5.2. Data entity 삭제](#252-data-entity-삭제)
   - [2.6. Batch로 data entitiy 다루기](#26-batch로-data-entitiy-다루기)
   - [2.7. Entitiy Relationships](#27-entitiy-relationships)
+  - [2.8. 그 외 다른 method에 대하여..](#28-그-외-다른-method에-대하여)
 
 <br>
 
@@ -285,6 +286,13 @@ For more examples and ideas, visit:
 
 ```sh
 $ sudo usermod -aG docker [username]
+```
+
+위 명령어 실행 시에도 `docker` 명령어가 실행이 안 될 경우 아래 명령어를 입력한다.
+
+```sh
+$ sudo chmod 666 /var/run/docker.sock
+$ sudo chown root:docker /var/run/docker.sock
 ```
 
 앞으로 Ubuntu 기반으로 진행되는 모든 다음 단계는 MS Windows에서도 WSL 터미널을 열어 동일하게 진행할 수 있다.
@@ -984,7 +992,7 @@ Orion context broker는 batch 단위 operation endpoint인 `/v2/op/update`를 �
   * `append`: `v2/entities`에 `POST`하는 것에 매핑된다. 중복일 경우 `/v2/entities/<id>/attrs`에 매핑되어 업데이트를 수행한다.
   * `appendStrict`: entitiy나 attribute가 중복되지 않을 때만 `append`로 동작한다.
   * `update`: `/v2/entities/<id>/attrs`에 `PATCH`하는 것과 매핑된다.
-  * `delete`: attribute가 entity에 포함되어 있으면 `/v2/entities/<id>/attrs/<attrName>`에 `DELETE`하는 것에 매핑되고, 아니면 `/v2/entities/<id>`에 `DELETE`하는것에 매핑된다.
+  * `delete`: attribute가 entity에 포함되어 있으면 `/v2/entities/<id>/attrs/<attrName>`에 `DELETE`하는 것에 매핑되고, 아니면 (id만 있다면) `/v2/entities/<id>`에 `DELETE`하는것에 매핑된다.
   * `replace`: `PUT` `/v2/entities/<id>/attrs`에 매핑된다.
 * `entities`: 추가할 내용을 `.json`형태로 기입한다.
 
@@ -1103,4 +1111,141 @@ curl --include --request POST \
 }'
 ```
 
+다시 삭제한 entity를 다시 등록하고 실습을 진행한다.
+
 ## 2.7. Entitiy Relationships
+
+각 data entity는 `ref<type>`이라는 attribute를 통해 연결시킬 수 있다. 처음에 등록했던 두 개의 `Store`와 방금 추가한 `Shelf`를 `refStore`라는 key를 만들고 `type`에 `Relationship`, `value`에 `<store id>`를 추가하여 관계를 추가할 수 있다.
+
+`append`를 사용해서 처음 등록했던 `Shelf`에 관계를 추가한다.
+
+```sh
+curl --include --request POST \
+  'http://localhost:1026/v2/op/update' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "actionType":"APPEND",
+  "entities":[
+    {
+      "id":"urn:ngsi-ld:Shelf:unit001", "type":"Shelf",
+      "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:001"
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit002", "type":"Shelf",
+      "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:001"
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit003", "type":"Shelf",
+      "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:001"
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit004", "type":"Shelf",
+      "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:002"
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit005", "type":"Shelf",
+      "refStore": {
+        "type": "Relationship",
+        "value": "urn:ngsi-ld:Store:002"
+      }
+    }
+  ]
+}'
+```
+
+이렇게 하면 `Store`와 `Shelf`가 연결된다. 예를 들어 `Shelf:unit001`과 연결된 `Store`의 id를 찾고 싶으면 아래 요청을 보낸다. `--get` 또는 `-G` 옵션은 `GET` 메소드에서 URL 쿼리 스트링을 줄 때 사용한다.
+
+**Request**
+
+```sh
+curl --get --request GET \
+  'http://localhost:1026/v2/entities/urn:ngsi-ld:Shelf:unit001' \
+  --data 'type=Shelf' \
+  --data 'options=values' \
+  --data 'attrs=refStore'
+```
+
+**Response**
+
+```json
+["urn:ngsi-ld:Store:001"]
+```
+
+연결된 `Store`의 id가 정상 출력됨을 확인할 수 있다.
+
+반대로, 특정 `Store`에 연결된 `Shelf`의 목록을 확인하려면 `options=count`를 사용한다. `urn:ngsi-ld:Store:001`과 연결된 `Shelf`들을 출력하는 명령어는 다음과 같다.
+
+**Request**
+
+```sh
+curl --get --request GET \
+  'http://localhost:1026/v2/entities/' \
+  --data 'q=refStore==urn:ngsi-ld:Store:001' \
+  --data 'options=count' \
+  --data 'type=Shelf' \
+  --data 'attrs=type'
+```
+
+**Response**
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Shelf:unit001",
+        "type": "Shelf"
+    },
+    {
+        "id": "urn:ngsi-ld:Shelf:unit002",
+        "type": "Shelf"
+    },
+    {
+        "id": "urn:ngsi-ld:Shelf:unit003",
+        "type": "Shelf"
+    }
+]
+```
+
+그리고 각 `Shelf`의 이름을 출력하려면 아래와 같은 명령어를 사용한다.
+
+**Request**
+
+```sh
+curl --get --request GET \
+  'http://localhost:1026/v2/entities/' \
+  --data 'q=refStore==urn:ngsi-ld:Store:001' \
+  --data 'options=values' \
+  --data 'type=Shelf' \
+  --data 'attrs=name'
+```
+
+**Response**
+
+```json
+[
+    [
+        "Corner Unit"
+    ],
+    [
+        "Wall Unit 1"
+    ],
+    [
+        "Wall Unit 2"
+    ]
+]
+```
+
+## 2.8. 그 외 다른 method에 대하여..
+
+본 tutorial에서 소개하지 못한 다른 method들은 swagger ui를 통해 편리한 인터페이스로 확인할 수 있다. [링크](https://swagger.lab.fiware.org/)에 접속하면 NGSI-V2 data model의 모든 API를 다 확인할 수 있다.
