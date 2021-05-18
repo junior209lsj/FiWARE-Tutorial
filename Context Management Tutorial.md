@@ -1,5 +1,17 @@
-# 1. FiWARE-Tutorial
-- [1. FiWARE-Tutorial](#1-fiware-tutorial)
+
+2021학년도 1학기 분산처리특강 FiWARE 설치 및 기본 사용법
+
+작성자: 이성재
+
+아래 참고 문서를 기반으로 만든 문서입니다.
+
+**목차**
+
+* [Core Context Management: The NGSI-v2 Interface » Getting Started with NGSI-v2](https://fiware-tutorials.readthedocs.io/en/latest/getting-started/index.html#next-steps)
+* [FIWARE NGSI APIv2 Walkthrough](https://fiware-orion.readthedocs.io/en/latest/user/walkthrough_apiv2/index.html#query-entity)
+* [Wednesday Webinar: Core Context Management](https://www.youtube.com/watch?v=pK4GgYjlmdY)
+
+- [1. 실습 사전지식 및 준비사항.](#1-실습-사전지식-및-준비사항)
   - [1.1. 배경 지식](#11-배경-지식)
     - [1.1.1. Docker](#111-docker)
       - [1.1.1.1. Docker image와 container](#1111-docker-image와-container)
@@ -14,33 +26,28 @@
       - [1.2.2.1. docker 설치 (Ubuntu)](#1221-docker-설치-ubuntu)
       - [1.2.2.2. Docker 설치 (Windows 10)](#1222-docker-설치-windows-10)
     - [1.2.3. Orion context broker와 MongoDB 이미지 연결](#123-orion-context-broker와-mongodb-이미지-연결)
-  - [1.3. Hello World!](#13-hello-world)
-  - [1.4. Data entitiy 생성](#14-data-entitiy-생성)
-  - [1.5. Data Entity 요청](#15-data-entity-요청)
-    - [1.5.1. 전체 data entitiy 요청](#151-전체-data-entitiy-요청)
-    - [1.5.2. Data entitiy 쿼리](#152-data-entitiy-쿼리)
-      - [1.5.2.1. 특정 id를 가진 data entitiy 요청하기](#1521-특정-id를-가진-data-entitiy-요청하기)
-      - [1.5.2.2. options=와 attrs= 사용하기](#1522-options와-attrs-사용하기)
-      - [1.5.2.3. URL 주소로 특정 attribute 받아오기](#1523-url-주소로-특정-attribute-받아오기)
-      - [1.5.2.4. 데이터 필터링](#1524-데이터-필터링)
-  - [1.6. Data entitiy 업데이트](#16-data-entitiy-업데이트)
-    - [1.6.1. 단일 attribute 변경](#161-단일-attribute-변경)
-    - [1.6.2. 다중 attribute 변경](#162-다중-attribute-변경)
-  - [1.7. Data entitiy 삭제](#17-data-entitiy-삭제)
-    - [1.7.1. Data entitiy의 attribute 삭제](#171-data-entitiy의-attribute-삭제)
-    - [1.7.2. Data entity 삭제](#172-data-entity-삭제)
+- [2. Core Context Management](#2-core-context-management)
+  - [2.1. Hello World!](#21-hello-world)
+  - [2.2. Data entitiy 생성](#22-data-entitiy-생성)
+  - [2.3. Data Entity 요청](#23-data-entity-요청)
+    - [2.3.1. 전체 data entitiy 요청](#231-전체-data-entitiy-요청)
+    - [2.3.2. Data entitiy 쿼리](#232-data-entitiy-쿼리)
+      - [2.3.2.1. 특정 id를 가진 data entitiy 요청하기](#2321-특정-id를-가진-data-entitiy-요청하기)
+      - [2.3.2.2. options=와 attrs= 사용하기](#2322-options와-attrs-사용하기)
+      - [2.3.2.3. URL 주소로 특정 attribute 받아오기](#2323-url-주소로-특정-attribute-받아오기)
+      - [2.3.2.4. 데이터 필터링](#2324-데이터-필터링)
+  - [2.4. Data entitiy 업데이트](#24-data-entitiy-업데이트)
+    - [2.4.1. 단일 attribute 변경](#241-단일-attribute-변경)
+    - [2.4.2. 다중 attribute 변경](#242-다중-attribute-변경)
+  - [2.5. Data entitiy 삭제](#25-data-entitiy-삭제)
+    - [2.5.1. Data entitiy의 attribute 삭제](#251-data-entitiy의-attribute-삭제)
+    - [2.5.2. Data entity 삭제](#252-data-entity-삭제)
+  - [2.6. Batch로 data entitiy 다루기](#26-batch로-data-entitiy-다루기)
+  - [2.7. Entitiy Relationships](#27-entitiy-relationships)
 
+<br>
 
-
-2021학년도 1학기 분산처리특강 FiWARE 설치 및 기본 사용법
-
-작성자: 이성재
-
-아래 참고 문서를 기반으로 만든 문서입니다.
-
-* [Core Context Management: The NGSI-v2 Interface » Getting Started with NGSI-v2](https://fiware-tutorials.readthedocs.io/en/latest/getting-started/index.html#next-steps)
-* [FIWARE NGSI APIv2 Walkthrough](https://fiware-orion.readthedocs.io/en/latest/user/walkthrough_apiv2/index.html#query-entity)
-* [Wednesday Webinar: Core Context Management](https://www.youtube.com/watch?v=pK4GgYjlmdY)
+# 1. 실습 사전지식 및 준비사항.
 
 ## 1.1. 배경 지식
 
@@ -314,7 +321,9 @@ $ docker run -d --name fiware-orion -h orion --network=fiware_default \
     -p 1026:1026 fiware/orion -dbhost mongo-db
 ```
 
-## 1.3. Hello World!
+# 2. Core Context Management
+
+## 2.1. Hello World!
 
 컨테이너를 실행한 후 `docker ps` 명령어를 이용하여 실행되고 있는 컨테이너를 확인할 수 있다. 아래와 같이 두 개의 컨테이너가 실행되고 있음을 확인할 수 있다.
 
@@ -367,7 +376,7 @@ $ curl --location --request GET 'http://localhost:1026/version'
 }
 ```
 
-## 1.4. Data entitiy 생성
+## 2.2. Data entitiy 생성
 
 RESTful API의 `POST` method를 이용하여 data entitiy를 만들어 본다. Orion context manager에 다음과 같은 상점 정보를 `.json` 형태로 생성할 것이다.
 
@@ -491,9 +500,9 @@ $ curl --location --request POST 'http://localhost:1026/v2/entities' \
 }'
 ```
 
-## 1.5. Data Entity 요청
+## 2.3. Data Entity 요청
 
-### 1.5.1. 전체 data entitiy 요청
+### 2.3.1. 전체 data entitiy 요청
 
 `"id": "urn:ngsi-ld:Store:001"`, `"id": "urn:ngsi-ld:Store:002"`의 entitiy를 create한 상태에서 curl 명령어나 postman 프로그램으로 `GET` 메소드를 이용하여 Context manager에게 data entitiy를 요청하면 아래와 같이 모든 내용의 entitiy를 받게 된다.
 
@@ -589,9 +598,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities'
 $ curl --location --request GET 'http://localhost:1026/v2/entities' | python3 -mjson.tool
 ```
 
-### 1.5.2. Data entitiy 쿼리
+### 2.3.2. Data entitiy 쿼리
 
-#### 1.5.2.1. 특정 id를 가진 data entitiy 요청하기
+#### 2.3.2.1. 특정 id를 가진 data entitiy 요청하기
 
 `"id": "urn:ngsi-ld:Store:001"` entitiy만 가지고 오고 싶으면 아래와 같은 명령어로 데이터를 쿼리할 수 있다.
 
@@ -640,7 +649,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-#### 1.5.2.2. options=와 attrs= 사용하기
+#### 2.3.2.2. options=와 attrs= 사용하기
 
 
 `type`을 제외한 `key:value`쌍만 보고 싶으면 `options=keyValues`를 이용하여 간결하게 정보를 쿼리할 수 있다.
@@ -696,7 +705,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 ]
 ```
 
-#### 1.5.2.3. URL 주소로 특정 attribute 받아오기
+#### 2.3.2.3. URL 주소로 특정 attribute 받아오기
 
 또한 URL에 `/v2/entities/{id}/attrs/{attrsName}/value`와 같은 형식으로도 데이터를 요청할 수 있다. 예를 들어 바로 위 예제와 동일한 결과를 얻기 위해 아래와 같은 요청을 할 수도 있다.
 
@@ -704,7 +713,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:Store:001/attrs/location/value'
 ```
 
-#### 1.5.2.4. 데이터 필터링
+#### 2.3.2.4. 데이터 필터링
 
 특정 `value`를 가지고 있는 data entitiy를 필터링하고 싶은 경우 `q=[key]==[value]`를 이용한다. 예를 들어 가게 이름이 'Checkpoint Markt'인 data entitiy (`"id": "urn:ngsi-ld:Store:001"`인 entitiy)의 전체 정보를 보고 싶은 경우 아래와 같이 요청한다. 웹 표준에서 `'`는 `%27`이고, 공백은 `%20`이다 ([참고](https://ghdwn0217.tistory.com/76)).
 
@@ -756,9 +765,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/?q=name==%27C
 ]
 ```
 
-## 1.6. Data entitiy 업데이트
+## 2.4. Data entitiy 업데이트
 
-### 1.6.1. 단일 attribute 변경
+### 2.4.1. 단일 attribute 변경
 
 `PUT` 메소드를 이용하여 특정 data entitiy를 변경할 수 있다. 변경 대상이 되는 attribute는 `http://[context broker 주소]:[port]/id/attrs/path/of/attribute`로 접근한다. 예를 들어 `urn:ngsi-ld:Store:001`의 `address` attribute의 `value`를 변경하는 경우 다음과 같은 명령어로 변경할 수 있다.
 
@@ -823,7 +832,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-### 1.6.2. 다중 attribute 변경
+### 2.4.2. 다중 attribute 변경
 
 `PATCH` 명령어를 이용하여 data entitiy의 여러 attribute를 한 번에 변경할 수 있다. 다음 명령어는 `urn:ngsi-ld:Store:001`의 `location`, `name` attribute를 동시에 변경하는 메소드이다.
 
@@ -895,9 +904,9 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-## 1.7. Data entitiy 삭제
+## 2.5. Data entitiy 삭제
 
-### 1.7.1. Data entitiy의 attribute 삭제
+### 2.5.1. Data entitiy의 attribute 삭제
 
 `DELETE` 메소드를 이용하여 data entitiy의 일부 attribute를 삭제할 수 있다. `id`가 `urn:ngsi-ld:Store:001`인 data entity의 `location` attribute를 삭제하려면 다음과 같음 명령어를 사용한다.
 
@@ -944,7 +953,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 }
 ```
 
-### 1.7.2. Data entity 삭제
+### 2.5.2. Data entity 삭제
 
 `DELETE` 메소드를 이용하여 data entitiy 전체를 삭제할 수 있다. `id`가 `urn:ngsi-ld:Store:001`인 data entitiy를 삭제하려면 다음과 같은 명령어를 사용한다.
 
@@ -966,3 +975,132 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 ```sh
 {"error":"NotFound","description":"The requested entity has not been found. Check type and id"}
 ```
+
+## 2.6. Batch로 data entitiy 다루기
+
+Orion context broker는 batch 단위 operation endpoint인 `/v2/op/update`를 제공한다. 해당 endpoint에 `POST` 메소드로 두 가지 property를 전달하여 batch 단위 operation을 수행할 수 있다.
+
+* `actionType`: 어떤 행위를 할 지 나타낸다. `appendStrict`, `update`, `delete`, `replace`를 사용할 수 있다.
+  * `append`: `v2/entities`에 `POST`하는 것에 매핑된다. 중복일 경우 `/v2/entities/<id>/attrs`에 매핑되어 업데이트를 수행한다.
+  * `appendStrict`: entitiy나 attribute가 중복되지 않을 때만 `append`로 동작한다.
+  * `update`: `/v2/entities/<id>/attrs`에 `PATCH`하는 것과 매핑된다.
+  * `delete`: attribute가 entity에 포함되어 있으면 `/v2/entities/<id>/attrs/<attrName>`에 `DELETE`하는 것에 매핑되고, 아니면 `/v2/entities/<id>`에 `DELETE`하는것에 매핑된다.
+  * `replace`: `PUT` `/v2/entities/<id>/attrs`에 매핑된다.
+* `entities`: 추가할 내용을 `.json`형태로 기입한다.
+
+다음은 데이터 batch를 `append` 하는 예제이다.
+
+**Request**
+
+```sh
+curl --include --request POST \
+  'http://localhost:1026/v2/op/update' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "actionType":"append",
+  "entities":[
+    {
+      "id":"urn:ngsi-ld:Shelf:unit001", "type":"Shelf",
+      "location":{
+        "type":"geo:json", "value":{ "type":"Point","coordinates":[13.3986112, 52.554699]}
+      },
+      "name":{
+        "type":"Text", "value":"Corner Unit"
+      },
+      "maxCapacity":{
+        "type":"Integer", "value":50
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit002", "type":"Shelf",
+      "location":{
+        "type":"geo:json","value":{"type":"Point","coordinates":[13.3987221, 52.5546640]}
+      },
+      "name":{
+        "type":"Text", "value":"Wall Unit 1"
+      },
+      "maxCapacity":{
+        "type":"Integer", "value":100
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit003", "type":"Shelf",
+      "location":{
+        "type":"geo:json", "value":{"type":"Point","coordinates":[13.3987221, 52.5546640]}
+      },
+      "name":{
+        "type":"Text", "value":"Wall Unit 2"
+      },
+      "maxCapacity":{
+        "type":"Integer", "value":100
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit004", "type":"Shelf",
+      "location":{
+        "type":"geo:json", "value":{"type":"Point","coordinates":[13.390311, 52.507522]}
+      },
+      "name":{
+        "type":"Text", "value":"Corner Unit"
+      },
+      "maxCapacity":{
+        "type":"Integer", "value":50
+      }
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit005", "type":"Shelf",
+      "location":{
+        "type":"geo:json","value":{"type":"Point","coordinates":[13.390309, 52.50751]}
+      },
+      "name":{
+        "type":"Text", "value":"Long Wall Unit"
+      },
+      "maxCapacity":{
+        "type":"Integer", "value":200
+      }
+    }
+  ]
+}'
+```
+
+curl에서 `--include` 플래그를 사용하면, HTTP response를 같이 반환한다. `/v2/op/update`에 `POST`하는 요청의 경우 성공하면 `204`를 반환한다.
+
+**Response**
+
+```sh
+HTTP/1.1 204 No Content
+Connection: Keep-Alive
+Fiware-Correlator: 7fd33644-b7ba-11eb-b93c-0242ac130003
+Date: Tue, 18 May 2021 09:22:00 GMT
+# 시간대는 중요하지 않다.
+```
+
+방금 추가한 모든 entitiy를 일괄 삭제하는 명령어는 아래와 같이 수행할 수 있다.
+
+```sh
+curl --include --request POST \
+  'http://localhost:1026/v2/op/update' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "actionType":"delete",
+  "entities":[
+    {
+      "id":"urn:ngsi-ld:Shelf:unit001"
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit002", "type":"Shelf"
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit003", "type":"Shelf"
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit004", "type":"Shelf"
+    },
+    {
+      "id":"urn:ngsi-ld:Shelf:unit005", "type":"Shelf"
+    }
+  ]
+}'
+```
+
+## 2.7. Entitiy Relationships
