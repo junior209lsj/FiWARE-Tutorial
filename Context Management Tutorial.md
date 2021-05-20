@@ -20,7 +20,7 @@
       - [1.1.2.1. Query string](#1121-query-string)
       - [1.1.2.2. curl 명령어를 이용한 context broker와의 통신](#1122-curl-명령어를-이용한-context-broker와의-통신)
       - [1.1.2.3. Postman을 이용한 context broker와의 통신 (선택 사항)](#1123-postman을-이용한-context-broker와의-통신-선택-사항)
-    - [`.json` 포맷](#json-포맷)
+    - [1.1.3. `.json` 포맷](#113-json-포맷)
   - [1.2. 사전 준비사항](#12-사전-준비사항)
     - [1.2.1. 실습 환경 정보](#121-실습-환경-정보)
     - [1.2.2. Docker 설치](#122-docker-설치)
@@ -151,7 +151,7 @@ POST 메소드 사용 예제
 
 ![POST 예시](./img/postman-post-ex.png)
 
-### `.json` 포맷
+### 1.1.3. `.json` 포맷
 
 `.json` 포맷은 `key:value` 쌍으로 이루어진 데이터를 사람이 읽을 수 있는 텍스트를 사용하는 개방형 표준이다. `key:value`를 모두 표현하기 때문에 그 자체로 의미를 알 수 있는 self-described 형태로 이루어져 있다.
 
@@ -339,6 +339,12 @@ $ docker network inspect fiware_default # fiware_default 정보 확인
 아래 명령어로 MongoDB 컨테이너를 실행한다.
 
 ```sh
+# -d: container를 background에서 실행
+# --name=mongo-db: 컨테이너 이름 지정
+# --network=fiware_default: 컨테이너와 연결할 네트워크 지정
+# --expose=27017: 27017 port를 개방하되 host OS와 연결하지는 않는다 (컨테이너끼리 연결할 때 사용)
+# mongo:4.2: 이미지 이름
+# --bind_ip_all: MongoDB 옵션으로 모든 ip를 외부접속 허용한다는 뜻
 $ docker run -d --name=mongo-db --network=fiware_default \
     --expose=27017 mongo:4.2 --bind_ip_all
 ```
@@ -346,7 +352,14 @@ $ docker run -d --name=mongo-db --network=fiware_default \
 아래 명령어로 fiware-orion 컨테이너를 실행한다.
 
 ```sh
-$ docker run -d --name fiware-orion -h orion --network=fiware_default \
+# -d: container를 background에서 실행
+# --name=fiware-orion: 컨테이너 이름 지정
+# -h orion: 컨테이너 hostname 설정
+# --network=fiware_default: 컨테이너와 연결할 네트워크 지정
+# -p 1026:1026: host OS의 1026번 포트와 컨테이너의 1026번 포트 연결
+# fiware/orion: 이미지 이름
+# -dbhost mongo-db: mongo-db와 연결
+$ docker run -d --name=fiware-orion -h orion --network=fiware_default \
     -p 1026:1026 fiware/orion -dbhost mongo-db
 ```
 
@@ -798,7 +811,7 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/?q=name==%27C
 
 ### 2.4.1. 단일 attribute 변경
 
-`PUT` 메소드를 이용하여 특정 data entitiy를 변경할 수 있다. 변경 대상이 되는 attribute는 `http://[context broker 주소]:[port]/id/attrs/path/of/attribute`로 접근한다. 예를 들어 `urn:ngsi-ld:Store:001`의 `address` attribute의 `value`를 변경하는 경우 다음과 같은 명령어로 변경할 수 있다.
+`PUT` 메소드를 이용하여 특정 data entitiy를 변경할 수 있다. 변경 대상이 되는 attribute는 `http://[context broker 주소]:[port]/id/attrs/<attribute>`로 접근한다. 예를 들어 `urn:ngsi-ld:Store:001`의 `address` attribute의 `value`를 변경하는 경우 다음과 같은 명령어로 변경할 수 있다.
 
 **Request**
 
@@ -1005,6 +1018,8 @@ $ curl --location --request GET 'http://localhost:1026/v2/entities/urn:ngsi-ld:S
 {"error":"NotFound","description":"The requested entity has not been found. Check type and id"}
 ```
 
+여기까지 진행한 후 `urn:ngsi-ld:Store:001`과 `urn:ngsi-ld:Store:002`를 초기 상태로 다시 등록한 후 실습을 계속 진행한다.
+
 ## 2.6. Batch로 data entitiy 다루기
 
 Orion context broker는 batch 단위 operation endpoint인 `/v2/op/update`를 제공한다. 해당 endpoint에 `POST` 메소드로 두 가지 property를 전달하여 batch 단위 operation을 수행할 수 있다.
@@ -1104,6 +1119,16 @@ Date: Tue, 18 May 2021 09:22:00 GMT
 # 시간대는 중요하지 않다.
 ```
 
+아래와 같은 명령어를 통해 방금 등록한 `Shelf` 타입 entity를 확인할 수 있다.
+
+**Request**
+
+```sh
+curl --location --request GET 'http://localhost:1026/v2/entities/?type=Shelf'
+```
+
+**Response**
+
 방금 추가한 모든 entitiy를 일괄 삭제하는 명령어는 아래와 같이 수행할 수 있다.
 
 ```sh
@@ -1117,16 +1142,16 @@ curl --include --request POST \
       "id":"urn:ngsi-ld:Shelf:unit001"
     },
     {
-      "id":"urn:ngsi-ld:Shelf:unit002", "type":"Shelf"
+      "id":"urn:ngsi-ld:Shelf:unit002"
     },
     {
-      "id":"urn:ngsi-ld:Shelf:unit003", "type":"Shelf"
+      "id":"urn:ngsi-ld:Shelf:unit003"
     },
     {
-      "id":"urn:ngsi-ld:Shelf:unit004", "type":"Shelf"
+      "id":"urn:ngsi-ld:Shelf:unit004"
     },
     {
-      "id":"urn:ngsi-ld:Shelf:unit005", "type":"Shelf"
+      "id":"urn:ngsi-ld:Shelf:unit005"
     }
   ]
 }'
@@ -1145,7 +1170,7 @@ curl --include --request POST \
   'http://localhost:1026/v2/op/update' \
   --header 'Content-Type: application/json' \
   --data '{
-  "actionType":"APPEND",
+  "actionType":"append",
   "entities":[
     {
       "id":"urn:ngsi-ld:Shelf:unit001", "type":"Shelf",
@@ -1211,12 +1236,16 @@ curl --get --request GET \
 **Request**
 
 ```sh
+# q=refStore==urn:ngsi-ld:Store:001 001번 Store와 연결되어 있는 entity 쿼리
+# options=count 연결된 entitiy 출력
+# type=Shelf Shelf type을 대상으로
+# attrs=type entity의 type만 출력
 curl --get --request GET \
   'http://localhost:1026/v2/entities/' \
   --data 'q=refStore==urn:ngsi-ld:Store:001' \
   --data 'options=count' \
   --data 'type=Shelf' \
-  --data 'attrs=type'
+  --data 'attrs=type' 
 ```
 
 **Response**
